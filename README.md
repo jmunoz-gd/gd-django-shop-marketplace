@@ -40,3 +40,36 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
+
+You can now access the following endpoints:
+
+* **Django Admin:** <http://127.0.0.1:8000/admin/>
+
+* **Products API:** <http://127.0.0.1:8000/v1/marketplace/products/>
+
+## Kay API Endpoints
+
+The primary API endpoint is ***/v1/marketplace/products/***.
+
+### Filtering
+
+| Parameter | Example                  | Description                                                |
+| --------- | ------------------------ | ---------------------------------------------------------- |
+| category  | /products/?category=5    | Returns products belonging to category with ID 5.          |
+| category  | /products/?category=9,10 | Returns products from categories with IDs 9 or 10.         |
+| category  | /products/?category=-6   | Returns products that do not belong to category with ID 6. |
+
+### Sorting
+
+| Parameter | Example                | Description                                  |
+| --------- | ---------------------- | -------------------------------------------- |
+| sort      | /products/?sort=name   | Sorts products by name in ascending order.   |
+| sort      | /products/?sort=-price | Sorts products by price in descending order. |
+
+## Running Tests
+
+To run the full test suite for the **marketplace** app, use the following command:
+
+```bash
+python manage.py test marketplace
+```
