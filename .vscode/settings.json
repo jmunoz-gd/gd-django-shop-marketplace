@@ -1,0 +1,9 @@
+{
+    "markdownlint.config": {
+        "MD029": false
+    },
+    "flake8.enabled": true,
+    "flake8.args": [
+        "--max-line-length=88"
+    ]
+}
