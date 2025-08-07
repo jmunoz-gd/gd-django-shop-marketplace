@@ -1,4 +1,4 @@
-# marketplace/tests/test_views.py
+# marketplace/test_suites/test_views.py
 
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -24,27 +24,24 @@ class ProductListViewTest(APITestCase):
         self.product_a = Product.objects.create(
             name="Laptop",
             price="1200.00",
-            category=self.category_electronics,
             description="Powerful laptop for professionals.",
         )
+        self.product_a.categories.set([self.category_electronics])
+
         self.product_b = Product.objects.create(
-            name="Smartphone",
-            price="800.00",
-            category=self.category_electronics,
-            description="Latest smartphone model.",
+            name="Smartphone", price="800.00", description="Latest smartphone model."
         )
+        self.product_b.categories.set([self.category_electronics])
+
         self.product_c = Product.objects.create(
-            name="T-Shirt",
-            price="20.00",
-            category=self.category_clothing,
-            description="Comfortable cotton t-shirt.",
+            name="T-Shirt", price="20.00", description="Comfortable cotton t-shirt."
         )
+        self.product_c.categories.set([self.category_clothing])
+
         self.product_d = Product.objects.create(
-            name="Fiction Book",
-            price="30.00",
-            category=self.category_books,
-            description="An exciting fiction novel.",
+            name="Fiction Book", price="30.00", description="An exciting fiction novel."
         )
+        self.product_d.categories.set([self.category_books])
 
         self.url = reverse("product-list")
 
@@ -64,10 +61,11 @@ class ProductListViewTest(APITestCase):
             self.assertIn("id", product_data)
             self.assertIn("name", product_data)
             self.assertIn("description", product_data)
-            self.assertIn("category", product_data)
-            self.assertIsInstance(product_data["category"], dict)
-            self.assertIn("id", product_data["category"])
-            self.assertIn("name", product_data["category"])
+            self.assertIn("categories", product_data)  # <-- Check for 'categories'
+            self.assertIsInstance(product_data["categories"], list)
+            self.assertIsInstance(product_data["categories"][0], dict)
+            self.assertIn("id", product_data["categories"][0])
+            self.assertIn("name", product_data["categories"][0])
 
     # --- Test Filtering ---
 

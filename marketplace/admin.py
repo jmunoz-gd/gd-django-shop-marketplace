@@ -1,6 +1,7 @@
 # marketplace/admin.py
+
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, ProductCategory, Bucket, BucketProduct
 
 
 @admin.register(Category)
@@ -12,6 +13,29 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "category", "created_at", "modified_at")
+    list_display = ("name", "price", "display_categories", "created_at", "modified_at")
     search_fields = ("name", "description")
-    list_filter = ("category", "created_at", "modified_at")
+    list_filter = ("categories", "created_at", "modified_at")
+
+    def display_categories(self, obj):
+        """
+        Custom method to display the categories of a product in the list view.
+        """
+        return ", ".join([category.name for category in obj.categories.all()])
+
+    display_categories.short_description = "Categories"
+
+
+@admin.register(Bucket)
+class BucketAdmin(admin.ModelAdmin):
+    list_display = ("user", "created_at")
+
+
+@admin.register(BucketProduct)
+class BucketProductAdmin(admin.ModelAdmin):
+    list_display = ("product", "bucket", "number")
+
+
+@admin.register(ProductCategory)
+class ProductCategoryAdmin(admin.ModelAdmin):
+    list_display = ("product", "category")

@@ -22,4 +22,5 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("v1/marketplace/", include("marketplace.urls")),
+    path("v1/marketplace_auth/", include("marketplace_auth.urls")),
 ]
