@@ -1,7 +1,7 @@
 # marketplace/admin.py
 
 from django.contrib import admin
-from .models import Category, Product, ProductCategory, Bucket, BucketProduct
+from .models import Category, Product, ProductCategory, Bucket, BucketProduct, Sale
 
 
 @admin.register(Category)
@@ -39,3 +39,23 @@ class BucketProductAdmin(admin.ModelAdmin):
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(admin.ModelAdmin):
     list_display = ("product", "category")
+
+
+@admin.register(Sale)
+class SaleAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "announcement_date",
+        "start_date",
+        "end_date",
+        "was_announced",
+        "discount",
+    )
+    list_filter = (
+        "announcement_date",
+        "start_date",
+        "end_date",
+        "was_announced",
+    )
+    search_fields = ("name",)
+    filter_horizontal = ("products", "categories")
