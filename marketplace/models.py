@@ -75,3 +75,17 @@ class BucketProduct(models.Model):
             f"{self.number} of {self.product.name} in "
             f"{self.bucket.user.username}'s bucket"
         )
+
+
+class Sale(models.Model):
+    name = models.CharField(max_length=255)
+    announcement_date = models.DateTimeField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    was_announced = models.BooleanField(default=False)
+    discount = models.DecimalField(max_digits=5, decimal_places=2)
+    products = models.ManyToManyField(Product, related_name="sales", blank=True)
+    categories = models.ManyToManyField(Category, related_name="sales", blank=True)
+
+    def __str__(self):
+        return self.name

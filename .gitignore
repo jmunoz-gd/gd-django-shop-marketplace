@@ -214,3 +214,5 @@ __marimo__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+
+sales_announcements_*.csv
