@@ -145,5 +145,4 @@ To run the full test suite for the `marketplace` and `marketplace_auth` apps, us
 
 ```bash
 python manage.py test marketplace
-python manage.py test marketplace_auth
 ```
