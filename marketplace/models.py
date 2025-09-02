@@ -1,4 +1,3 @@
-# marketplace/models.py
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User, Group
@@ -6,6 +5,10 @@ from django.utils import timezone
 
 
 class Category(models.Model):
+    """
+    Represents a product category, which can be part of a hierarchical structure.
+    """
+
     name = models.CharField(max_length=255, unique=True)
     parent = models.ForeignKey(
         "self",
@@ -25,6 +28,10 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    """
+    Represents a single product available in the marketplace.
+    """
+
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
@@ -73,6 +80,11 @@ class Product(models.Model):
 
 
 class ProductCategory(models.Model):
+    """
+    Intermediate model to manage the many-to-many relationship between products
+    and categories.
+    """
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
@@ -81,6 +93,10 @@ class ProductCategory(models.Model):
 
 
 class Bucket(models.Model):
+    """
+    Represents a user's shopping bucket, storing products they intend to purchase.
+    """
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     products = models.ManyToManyField(
         Product, through="BucketProduct", related_name="buckets"
@@ -93,6 +109,10 @@ class Bucket(models.Model):
 
 
 class BucketProduct(models.Model):
+    """
+    Represents a specific product within a user's bucket, including the quantity.
+    """
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
     number = models.PositiveIntegerField(default=1)
@@ -109,6 +129,12 @@ class BucketProduct(models.Model):
 
 
 class Sale(models.Model):
+    """
+    Represents a sale event with a discount.
+
+    The discount can be applied to specific products or categories.
+    """
+
     name = models.CharField(max_length=255)
     announcement_date = models.DateTimeField()
     start_date = models.DateTimeField()
@@ -127,6 +153,7 @@ class Sale(models.Model):
     )
 
     def is_closed_sale(self):
+        """Checks if the sale is a closed sale (only for specific users/groups)."""
         return self.allowed_users.exists() or self.allowed_groups.exists()
 
     def __str__(self):
@@ -134,6 +161,10 @@ class Sale(models.Model):
 
 
 class Order(models.Model):
+    """
+    Represents a finalized order created from a user's bucket.
+    """
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(
@@ -145,6 +176,11 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
+    """
+    Represents a single product within an Order,
+    capturing its state at the time of purchase.
+    """
+
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name="items"
     )

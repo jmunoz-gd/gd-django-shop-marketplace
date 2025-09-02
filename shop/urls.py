@@ -17,10 +17,26 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+from marketplace.views import BucketProductViewSet, ProductListV2, create_order
+
+
+# DRF router for the new ViewSet
+router_v2 = routers.DefaultRouter()
+router_v2.register(r"bucket", BucketProductViewSet, basename="bucket")
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # V1 API Endpoints
     path("v1/marketplace/", include("marketplace.urls")),
     path("v1/marketplace_auth/", include("marketplace_auth.urls")),
+    # V2 API Endpoints
+    path("v2/marketplace/", include(router_v2.urls)),
+    path(
+        "v2/marketplace/products/",
+        ProductListV2.as_view(),
+        name="product-list-v2",
+    ),
+    path("v2/marketplace/create-order/", create_order, name="create-order"),
 ]

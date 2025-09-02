@@ -30,6 +30,9 @@ class ProductSerializer(serializers.ModelSerializer):
 class V2ProductSerializer(serializers.ModelSerializer):
     """
     Serializer for the Product model in the v2 API, including price and discount.
+
+    This serializer calculates and displays the final discounted price and
+    the discount percentage.
     """
 
     categories = CategorySerializer(many=True, read_only=True)
@@ -66,6 +69,10 @@ class V2ProductSerializer(serializers.ModelSerializer):
 
 
 class BucketProductSerializer(serializers.ModelSerializer):
+    """
+    Serializer for a product item within a user's shopping bucket.
+    """
+
     name = serializers.CharField(source="product.name", read_only=True)
     id = serializers.IntegerField(source="product.id", read_only=True)
 
@@ -75,6 +82,13 @@ class BucketProductSerializer(serializers.ModelSerializer):
 
 
 class BucketSerializer(serializers.ModelSerializer):
+    """
+    Serializer for a user's shopping bucket.
+
+    It includes a nested representation of all products in the bucket and
+    calculates the total price.
+    """
+
     products = BucketProductSerializer(source="bucketproduct_set", many=True)
     total = serializers.SerializerMethodField()
 
@@ -91,12 +105,25 @@ class BucketSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    """
+    Serializer for a product item within an Order.
+
+    This serializer captures the state of a product at the time of purchase,
+    including its price and discount.
+    """
+
     class Meta:
         model = OrderItem
         fields = ["product", "name", "price", "discount", "number"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    """
+    Serializer for a finalized Order.
+
+    It includes a nested representation of all OrderItems and the order total.
+    """
+
     items = OrderItemSerializer(many=True, read_only=True)
 
     class Meta:

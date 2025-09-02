@@ -14,6 +14,13 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def announce_sales():
+    """
+    A periodic task to announce sales to all active, non-staff users.
+
+    It fetches sales that have not been announced, marks them as announced,
+    and logs the email addresses of the users who would receive the announcement
+    to a CSV file.
+    """
     logger.info("Starting 'announce_sales' periodic task.")
 
     try:
@@ -30,22 +37,28 @@ def announce_sales():
             return "No sales to announce."
 
         # --- REFINED QUERY: Fetch only non-staff users for the campaign ---
-        all_users = User.objects.filter(is_active=True, is_staff=False).values_list(
-            "email", flat=True
-        )
+        all_users = User.objects.filter(
+            is_active=True, is_staff=False
+        ).values_list("email", flat=True)
         if not all_users:
             logger.warning("No regular users found to send announcements to.")
             return "No regular users found."
 
-        file_path = f'sales_announcements_{datetime.now().strftime("%Y%m%d%H%M%S")}.csv'
+        file_path = (
+            f'sales_announcements_{datetime.now().strftime("%Y%m%d%H%M%S")}.csv'
+        )
         total_emails_sent = 0
 
         with open(file_path, "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow(["email", "subject", "discount", "products", "categories"])
+            writer.writerow(
+                ["email", "subject", "discount", "products", "categories"]
+            )
 
             for sale in sales_to_announce:
-                product_names = ", ".join(sale.products.values_list("name", flat=True))
+                product_names = ", ".join(
+                    sale.products.values_list("name", flat=True)
+                )
                 category_names = ", ".join(
                     sale.categories.values_list("name", flat=True)
                 )
@@ -81,6 +94,7 @@ def announce_sales():
 
     except Exception as e:
         logger.error(
-            f"An unexpected error occurred in announce_sales task: {e}", exc_info=True
+            f"An unexpected error occurred in announce_sales task: {e}",
+            exc_info=True,
         )
         raise

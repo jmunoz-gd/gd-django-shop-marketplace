@@ -1,11 +1,28 @@
 # marketplace/admin.py
+"""
+Django Admin configuration for the marketplace application.
+
+This module defines how models are displayed and managed in the Django admin interface.
+It includes custom list views, search fields, and filters for improved usability.
+"""
 
 from django.contrib import admin
-from .models import Category, Product, ProductCategory, Bucket, BucketProduct, Sale
+from .models import (
+    Category,
+    Product,
+    ProductCategory,
+    Bucket,
+    BucketProduct,
+    Sale,
+)
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the Category model.
+    """
+
     list_display = ("name", "parent", "created_at", "modified_at")
     search_fields = ("name",)
     list_filter = ("created_at", "modified_at")
@@ -13,7 +30,19 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "price", "display_categories", "created_at", "modified_at")
+    """
+    Admin configuration for the Product model.
+
+    Includes a custom method to display associated categories.
+    """
+
+    list_display = (
+        "name",
+        "price",
+        "display_categories",
+        "created_at",
+        "modified_at",
+    )
     search_fields = ("name", "description")
     list_filter = ("categories", "created_at", "modified_at")
 
@@ -28,21 +57,39 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Bucket)
 class BucketAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the Bucket model.
+    """
+
     list_display = ("user", "created_at")
 
 
 @admin.register(BucketProduct)
 class BucketProductAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the BucketProduct model.
+    """
+
     list_display = ("product", "bucket", "number")
 
 
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the ProductCategory model.
+    """
+
     list_display = ("product", "category")
 
 
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
+    """
+    Admin configuration for the Sale model.
+
+    Includes horizontal filters for many-to-many relationships.
+    """
+
     list_display = (
         "name",
         "announcement_date",

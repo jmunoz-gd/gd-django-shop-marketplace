@@ -320,12 +320,21 @@ def bucket_product_detail(request, product_id):
 
 
 class StandardResultsSetPagination(PageNumberPagination):
+    """
+    Custom pagination class for consistent API responses.
+    """
+
     page_size = 10
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class ProductListV2(generics.ListAPIView):
+    """
+    A class-based view for the V2 product list endpoint, with filtering,
+    sorting, and pagination.
+    """
+
     queryset = Product.objects.all()
     serializer_class = V2ProductSerializer
     pagination_class = StandardResultsSetPagination
@@ -343,6 +352,12 @@ class ProductListV2(generics.ListAPIView):
 
 
 class BucketProductViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for handling all CRUD operations on a user's bucket products.
+
+    This replaces the old function-based views for the V1 API.
+    """
+
     queryset = BucketProduct.objects.all()
     serializer_class = BucketProductSerializer
     permission_classes = [IsAuthenticated]
@@ -474,6 +489,10 @@ class BucketProductViewSet(viewsets.ModelViewSet):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def create_order(request):
+    """
+    Creates an order from the user's bucket, empties the bucket,
+    and updates product availability.
+    """
     try:
         user_bucket = Bucket.objects.select_for_update().get(user=request.user)
     except Bucket.DoesNotExist:
