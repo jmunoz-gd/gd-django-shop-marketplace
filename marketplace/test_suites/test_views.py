@@ -29,17 +29,23 @@ class ProductListViewTest(APITestCase):
         self.product_a.categories.set([self.category_electronics])
 
         self.product_b = Product.objects.create(
-            name="Smartphone", price="800.00", description="Latest smartphone model."
+            name="Smartphone",
+            price="800.00",
+            description="Latest smartphone model.",
         )
         self.product_b.categories.set([self.category_electronics])
 
         self.product_c = Product.objects.create(
-            name="T-Shirt", price="20.00", description="Comfortable cotton t-shirt."
+            name="T-Shirt",
+            price="20.00",
+            description="Comfortable cotton t-shirt.",
         )
         self.product_c.categories.set([self.category_clothing])
 
         self.product_d = Product.objects.create(
-            name="Fiction Book", price="30.00", description="An exciting fiction novel."
+            name="Fiction Book",
+            price="30.00",
+            description="An exciting fiction novel.",
         )
         self.product_d.categories.set([self.category_books])
 
@@ -61,7 +67,9 @@ class ProductListViewTest(APITestCase):
             self.assertIn("id", product_data)
             self.assertIn("name", product_data)
             self.assertIn("description", product_data)
-            self.assertIn("categories", product_data)  # <-- Check for 'categories'
+            self.assertIn(
+                "categories", product_data
+            )  # <-- Check for 'categories'
             self.assertIsInstance(product_data["categories"], list)
             self.assertIsInstance(product_data["categories"][0], dict)
             self.assertIn("id", product_data["categories"][0])
@@ -73,7 +81,9 @@ class ProductListViewTest(APITestCase):
         """
         Test that filtering by a single category ID returns only relevant products.
         """
-        response = self.client.get(self.url, {"category": self.category_electronics.id})
+        response = self.client.get(
+            self.url, {"category": self.category_electronics.id}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
 
@@ -87,7 +97,9 @@ class ProductListViewTest(APITestCase):
         Test that filtering by multiple category IDs returns products from all
         specified categories.
         """
-        category_ids = f"{self.category_electronics.id},{self.category_clothing.id}"
+        category_ids = (
+            f"{self.category_electronics.id},{self.category_clothing.id}"
+        )
         response = self.client.get(self.url, {"category": category_ids})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 3)
